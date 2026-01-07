@@ -88,9 +88,9 @@ body {
   font-size: .9rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-
-  text-decoration: none;
+  
   color: inherit;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -398,6 +398,7 @@ body.jl-ready #grid {
   }
 }
 
+
 /* 背景（全面） */
 .gm-backdrop {
   position: absolute;
@@ -478,11 +479,24 @@ body.jl-ready #grid {
   pointer-events: none;
 }
 
+.gm-main {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.gm-main:visited {
+  color: inherit;
+}
+
 .gm-name .gm-main{
   font-size: .8rem;
   font-weight: 600;
   letter-spacing: 0.05em;
+  pointer-events: auto;
+
 }
+
 .gm-name .gm-subtitle{
   font-size: .7rem;
   letter-spacing: 0.04em;
@@ -490,7 +504,7 @@ body.jl-ready #grid {
 
 /* 左下キャプション */
 .gm-ttl{
-  margin: 0 0 2px;
+  margin-bottom: 1px;
   font-size: .7rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -803,3 +817,4 @@ body.jl-ready #grid {
     margin-top: 22px;
   }
 }
+
