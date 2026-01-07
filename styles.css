@@ -55,15 +55,20 @@ body {
 
 
 /* ==========================================================================
-   4) Top bar (overview と同じトップバー)
-   - .topbar  : レイアウト枠（grid）
-   - .brand   : 左側のブランド表記（現状は fixed）
-   - .toplinks: 右上のリンク群（現状は fixed）
+   4) TOP BAR (Sticky + Responsive)
+   - desktop/tablet: left brand / right nav
+   - mobile portrait: nav goes under artist (left)
    ========================================================================== */
-.topbar {
-  position: relative;
+
+/* Top bar: sticky header */
+.topbar{
+  position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 1000;
+
+  /* optional: keep text readable over images */
+  /* background: #f7F7F5; */
+
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -72,109 +77,68 @@ body {
   min-height: var(--bar-h);
 }
 
-/* ブランド表記（artist/role） */
-.brand {
+/* Brand (artist/role) */
+.brand{
   display: flex;
   flex-direction: column;
   line-height: 1.2;
-  position: fixed; /* 画面に固定（topbar と別挙動） */
 }
 
-.brand .artist {
-  font-size: .7rem;
+.brand .artist{
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
 }
 
-.brand .role {
+.brand .role{
   font-size: .7rem;
   letter-spacing: .05em;
 }
 
-/* 右側リンク（CONTACT 等） */
-.toplinks {
-  position: fixed; /* 画面に固定 */
-  top: 28px;
-  right: 10px;
-
+/* Nav links */
+.toplinks{
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-.toplinks a {
+.toplinks a{
   font-size: .7rem;
   color: inherit;
   text-decoration: none;
 }
 
-/* ===== Top links: current page underline ===== */
-.toplinks a[aria-current="page"] {
+/* Current page underline */
+.toplinks a[aria-current="page"]{
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.toplinks a:hover {
+.toplinks a:hover{
   opacity: .8;
 }
 
-/* ========================================
-   INFO page (standalone)
-   - info.html 専用
-   - overview / lightbox とは独立
-   ======================================== */
+/* Mobile portrait: stack nav under artist */
+@media (max-width: 600px) and (orientation: portrait){
+  .topbar{
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 8px;
+    padding: 14px 5px 10px;
+    min-height: auto;
+    background: #f7F7F5;
+  }
 
-/* 全体ラッパー */
-.info-page {
-  background: #f7f7f5;
-}
 
-/* 中身 */
-.info-page__inner {
-  padding: 24px var(--gutter);
-  max-width: 520px;       /* 読み物としての最大幅 */
-  line-height: 1.55;
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-}
 
-/* セクションラベル */
-.hp-label {
-  margin: 0 0 14px;
-  letter-spacing: 0.08em;
-}
+  .toplinks{
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
-/* クライアントリスト */
-.hp-list {
-  margin: 0 0 32px;
-  line-height: 1.7;
-}
-
-/* メール・SNS */
-.hp-note a {
-  color: inherit;
-  text-decoration: underline;
-  line-height: 5;
-}
-
-.hp-note a:hover {
-  opacity: 0.7;
-}
-
-/* コピーライト */
-.hp-copyright {
-  margin-top: 56px;
-  font-size: 0.55rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  opacity: 0.6;
-}
-
-/* ========================================
-   INFO page small screen tweaks
-   ======================================== */
-
-@media (max-width: 480px) {
-  .info-page__inner {
-    padding: 20px 16px;
+  .toplinks a{
+    font-size: .7rem;
+    letter-spacing: 0.04em;
   }
 }
 
@@ -187,9 +151,6 @@ body {
 .page {
   padding: 0 var(--gutter) var(--gutter);
 }
-
-
-
 
 
 /* ==========================================================================
@@ -383,10 +344,6 @@ body.jl-ready #grid {
 }
 
 
-
-
-
-
 /* ==========================================================================
    11) Small screen tweaks (ヘッダー文字)
    ========================================================================== */
@@ -397,19 +354,8 @@ body.jl-ready #grid {
 }
 
 
-
-
-
-
 /* ==========================================================================
    12) Lightbox: gm (gallery modal)
-   - .gm         : モーダル全体
-   - .gm-backdrop: 背景（クリックで閉じる用途）
-   - .gm-frame   : 表示枠（画像/動画の領域）
-   - .gm-caption : キャプション（左下）
-   - .gm-counter : カウンター（右下）
-   - .gm-close   : クローズボタン（右下）
-   - .gm-hit     : クリックゾーン（prev/next）
    ========================================================================== */
 
 /* aria-hidden="true" のときは完全に消す */
@@ -425,7 +371,7 @@ body.jl-ready #grid {
   display: grid;
   place-items: center;
 
-  /* ★ 画面下のキャプション・クローズボタン用スペース */
+  /* 画面下のキャプション・クローズボタン用スペース */
   --gm-footer-h: 120px;
 }
 
@@ -456,35 +402,13 @@ body.jl-ready #grid {
 .gm-frame {
   position: relative;
   width: 98vw;
-
-  /* 下にキャプション/ボタン領域を残す */
   height: calc(100vh - var(--gm-footer-h));
-
   padding: 0;
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* ---- iPhone / 小さい画面用：キャプション/ボタン位置の安全域調整 ---- */
-@media (max-width: 768px) {
-
-  .gm-caption {
-    left: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-  }
-
-  .gm-counter {
-    right: 14px;
-    bottom: calc(28px + env(safe-area-inset-bottom));
-  }
-
-  .gm-close {
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-  }
 }
 
 /* 画像（gm 内） */
@@ -498,22 +422,8 @@ body.jl-ready #grid {
   -webkit-user-drag: none;
 }
 
-/* 動画本体（gm 内） */
-.gm-video-wrap video {
-  display: block;
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;
-}
-
-
-
-
-
-
 /* ==========================================================================
    13) Lightbox caption & UI text
-   - 表示は JS/デザイン意図により display:none が多い（必要に応じてON）
    ========================================================================== */
 
 .gm-caption{
@@ -526,19 +436,35 @@ body.jl-ready #grid {
   color: #000;
 }
 
+/* ---- iPhone / 小さい画面用：キャプション/ボタン位置の安全域調整 ---- */
+@media (max-width: 768px) {
+  .gm-caption {
+    left: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  .gm-counter {
+    right: 14px;
+    bottom: calc(28px + env(safe-area-inset-bottom));
+  }
+  .gm-close {
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
 /* 左上：署名だけ分離（.gm-caption の外に見せるため fixed） */
 .gm-name{
   position: fixed;
   top: 3px;
   left: 5px;
-  z-index: 10000;      /* gm(9999)より前に確実に */
+  z-index: 10000;
   margin: 0;
   pointer-events: none;
 }
 
-/* 署名（左上）の見た目は今のまま */
 .gm-name .gm-main{
-  font-size: .7rem;
+  font-size: .8rem;
+  font-weight: 600;
   letter-spacing: 0.05em;
 }
 .gm-name .gm-subtitle{
@@ -546,7 +472,7 @@ body.jl-ready #grid {
   letter-spacing: 0.04em;
 }
 
-/* 左下キャプションの見た目（今のまま or 微調整） */
+/* 左下キャプション */
 .gm-ttl{
   margin: 0 0 2px;
   font-size: .7rem;
@@ -592,11 +518,8 @@ body.jl-ready #grid {
   border: 0;
   background: transparent;
   cursor: pointer;
-
-  /* ★ 追加：動画(z=20)より低くする */
   z-index: 5;
 }
-
 .gm-prev { left: 0; }
 .gm-next { right: 0; }
 
@@ -610,14 +533,10 @@ body.jl-ready #grid {
   -webkit-user-select: none;
 }
 
-
-
-
-
 /* ==========================================================================
    14) Lightbox open behavior
-   - モーダル表示中に背面スクロール/オーバースクロールを抑止
    ========================================================================== */
+
 .gm[aria-hidden="false"] {
   position: fixed;
   inset: 0;
@@ -634,33 +553,22 @@ body.jl-ready #grid {
   -webkit-overflow-scrolling: auto !important;
 }
 
-
-
-
-
-
 /* ==========================================================================
    15) Custom video controls (sv)
-   - .gm-video-wrap  : 動画＋コントロールのラッパー（ここが最終定義）
-   - .sv-controls    : コントロールUI本体（下部グラデ）
-   - .sv-progress    : シークバー
-   - .sv-nav/.sv-btn : ボタン行
    ========================================================================== */
 
 /* 動画のラッパー（sv-controls の基準） */
 .gm-video-wrap {
-  position: relative;   /* sv-controls の基準 */
+  position: relative;
   flex: 0 0 auto;
-  display: inline-flex; /* 幅 = 子要素（video）の幅 */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   z-index: 20;
 
-  /* 読み込み準備ができるまでフェードイン */
   opacity: 0;
   transition: opacity .35s ease;
 
-  /* ★ タップを受け付ける */
   pointer-events: auto;
 }
 
@@ -681,7 +589,6 @@ body.jl-ready #grid {
   flex-direction: column;
   gap: 6px;
 
-  /* 初期は非表示（必要時に表示） */
   opacity: 0;
   pointer-events: none;
   transition: opacity .25s ease;
@@ -756,5 +663,127 @@ body.jl-ready #grid {
   .gm-video-wrap .sv-controls.is-visible {
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+/* ==========================================================================
+   Video sizing (default)  ※B案：ここに集約（数値変更なし）
+   ========================================================================== */
+
+/* 動画本体（gm 内）: gm-frame の中に必ず収める */
+.gm-video-wrap{
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.gm-video-wrap video{
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   FIX — mobile PORTRAIT only（数値変更なし）
+   ========================================================================== */
+
+@media
+  (max-width: 768px)
+  and (orientation: portrait)
+  and (pointer: coarse) {
+
+  .gm-frame{
+    height: calc(100svh - var(--gm-footer-h));
+  }
+
+  .gm-video-wrap{
+    max-height: 100%;
+    max-width: none;
+  }
+
+  .gm-video-wrap video{
+    height: 100%;
+    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .gm.is-portrait-video .gm-video-wrap{
+    max-width: 72vw;
+    margin: 0 auto;
+  }
+
+  .gm.is-portrait-video{
+    --gm-footer-h: 190px;
+  }
+}
+
+
+
+/* ============================
+  16) Info Layout
+   ============================ */
+.info{
+  padding: 26px 22px 80px;
+}
+
+.infoGrid{
+  display: block; /* mobile default */
+}
+
+.info h2{
+  margin: 22px 0 10px;
+  font-size: .7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.info p{
+  margin: 0 0 14px;
+  font-size: .7rem;
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+  max-width: 72ch; /* mobile: 読みやすい行長 */
+}
+
+.info a{
+  color: inherit;
+  text-decoration: none;
+}
+
+.info .copyright{
+ color: #11111182;
+  margin-top: 50px;
+}
+
+/* ==============
+   Desktop: 2 columns like your screenshot
+   ============== */
+@media (min-width: 980px){
+
+  .info{
+    padding: 34px 42px 80px;
+  }
+
+  .infoGrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 140px;
+    align-items: start;
+  }
+
+  .infoLeft p{
+    max-width: 64ch; /* 左側本文は少し細め */
+  }
+
+  .infoRight p{
+    max-width: 56ch; /* 右側は羅列なのでさらに細めでもOK */
+  }
+
+  .infoRight .copyright{
+    margin-top: 22px;
   }
 }

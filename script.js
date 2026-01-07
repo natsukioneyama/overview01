@@ -375,75 +375,81 @@ document.addEventListener('DOMContentLoaded', () => {
      6) 表示（画像 / 動画）
      ========================= */
 
-  function showImage(img) {
-    const full = img.dataset.full || img.src;
+function showImage(img) {
+  const full = img.dataset.full || img.src;
+  const record = preloadFullImage(full);
 
-    const record = preloadFullImage(full);
+  const apply = () => {
+    gmImg.style.pointerEvents = ''; // 追加：画像はクリック可能に戻す
+    gmImg.src = full;
+    gmImg.hidden = false;
+    gmImg.classList.add('ready');
+  };
 
-    const apply = () => {
-      gmImg.src = full;
-      gmImg.hidden = false;
-      gmImg.classList.add('ready');
-    };
+  if (record && record.promise) record.promise.then(apply);
+  else apply();
+}
 
-    if (record && record.promise) {
-      record.promise.then(apply);
-    } else {
-      apply();
-    }
+function showVideo(meta) {
+  const src = meta.dataset.full;
+  if (!src) return;
+
+  gmImg.hidden = true;
+  gmImg.classList.remove('ready');
+  gmImg.style.pointerEvents = 'none';
+
+  gmVWrap.hidden = false;
+  gmVideo.hidden = false;
+  gmVWrap.classList.remove('is-ready');
+
+  gmVideo.loop = true;
+
+  if (gmVideo.src !== src) {
+    gmVideo.src = src;
   }
 
-  function showVideo(meta) {
-    const src = meta.dataset.full;
-    if (!src) return;
+  gmVideo.currentTime = 0;
 
-    // 静止画を隠す
-    gmImg.hidden = true;
-    gmImg.classList.remove('ready');
-    gmImg.style.pointerEvents = 'none'; // タップを殺す（必要ならCSS側に寄せてもOK）
+  gmVideo.addEventListener('loadedmetadata', () => {
+    const isPortrait = (gmVideo.videoHeight / gmVideo.videoWidth) > 1.15;
+    gm.classList.toggle('is-portrait-video', isPortrait);
+  }, { once: true });
 
-    // 動画表示準備
-    gmVWrap.hidden = false;
-    gmVideo.hidden = false;
-    gmVWrap.classList.remove('is-ready');
+  gmVideo.addEventListener('loadeddata', () => {
+    gmVWrap.classList.add('is-ready');
+  }, { once: true });
 
-    gmVideo.loop = true;
+  const p = gmVideo.play();
+  if (p && p.then) p.catch(() => {});
+}
 
-    // src セット（同じなら再代入しない）
-    if (gmVideo.src !== src) {
-      gmVideo.src = src;
-    }
-
-    gmVideo.currentTime = 0;
-
-    const onFirstFrame = () => {
-      gmVWrap.classList.add('is-ready');
-      gmVideo.removeEventListener('loadeddata', onFirstFrame);
-    };
-    gmVideo.addEventListener('loadeddata', onFirstFrame);
-
-    // 自動再生（失敗してもUIは維持）
-    const p = gmVideo.play();
-    if (p && p.then) p.catch(() => {});
-  }
 
   /* =========================
      7) Open / Close
      ========================= */
 
-  function resetMedia() {
-    // image reset
-    gmImg.src = '';
-    gmImg.classList.remove('ready');
-    gmImg.hidden = false;
+function resetMedia() {
+  // image reset
+  gmImg.src = '';
+  gmImg.classList.remove('ready');
+  gmImg.hidden = false;
 
-    // video reset
-    gmVideo.pause();
-    gmVideo.removeAttribute('src');
-    gmVideo.currentTime = 0;
-    gmVideo.hidden = true;
-    gmVWrap.hidden = true;
-  }
+  // 追加：動画で殺した pointerEvents を必ず戻す
+  gmImg.style.pointerEvents = '';
+
+  // video reset
+  gmVideo.pause();
+  gmVideo.removeAttribute('src');
+  gmVideo.currentTime = 0;
+
+  gmVideo.hidden = true;
+  gmVWrap.hidden = true;
+  gmVWrap.classList.remove('is-ready');
+
+  gm.classList.remove('is-portrait-video');
+}
+
+
 
   function openAt(index) {
     currentIndex = (index + thumbItems.length) % thumbItems.length;
@@ -594,11 +600,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: false });
 
 });
-
-
-
-
-
 
 
 
@@ -1063,6 +1064,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
+
+
+
+
+
+
 /* =========================
    Shared Top Nav (inject)
    - Put this near the bottom of script.js
@@ -1074,12 +1082,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ここを増やせば全ページ一発で反映されます
   const links = [
-    { href: 'index.html',    label: 'OVERVIEW'  },
-    { href: 'editorial.html',label: 'EDITORIAL' },
-    { href: 'beauty.html',   label: 'BEAUTY'    },
-    { href: 'video.html',   label: 'MOVING IMAGE'  },
-    { href: 'info.html',     label: 'INFO'      },
-    { href: 'mailto:natsukimua@gmail.com', label: 'CONTACT', external: true }
+    { href: 'index.html',    label: 'Overview'  },
+    { href: 'editorial.html',label: 'Editorial' },
+    //{ href: 'beauty.html',   label: 'BEAUTY'    },//
+    { href: 'video.html',   label: 'Moving Images'  },
+    { href: 'info.html',     label: 'Info'      },
+    { href: 'mailto:', label: 'Contact', external: true }
   ];
 
   const path = location.pathname.split('/').pop();
