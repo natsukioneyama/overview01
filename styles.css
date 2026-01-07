@@ -88,6 +88,10 @@ body {
   font-size: .9rem;
   font-weight: 600;
   letter-spacing: 0.06em;
+
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .brand .role{
@@ -379,6 +383,18 @@ body.jl-ready #grid {
 @media (max-width: 767px) {
   .gm {
     --gm-footer-h: 140px;
+  }
+}
+
+/* iPad portrait（11inch / 13inch 共通）だけフッター余白を増やす */
+@media 
+  (orientation: portrait)
+  and (hover: none)
+  and (pointer: coarse)
+  and (min-width: 768px) {
+
+  .gm {
+    --gm-footer-h: 180px;
   }
 }
 
